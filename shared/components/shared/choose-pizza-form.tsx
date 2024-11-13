@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import React from "react"
 import { cn } from "@/shared/lib/utils"
@@ -15,16 +15,21 @@ interface Props {
   name: string
   ingredients: Ingredient[]
   items: ProductItem[]
-  onClickAddCard?: VoidFunction
+  loading: boolean
+  onSubmit: (itemId: number, ingredient: number[]) => void
   className?: string
 }
 
+/**
+ * Форма для добавления ПИЦЦЫ
+ */
 export const ChoosePizzaForm: React.FC<Props> = ({
   imageUrl,
   name,
   ingredients,
   items,
-  onClickAddCard,
+  loading,
+  onSubmit,
   className,
 }) => {
   const {
@@ -32,6 +37,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     type,
     selectedIngredients,
     availableSizes,
+    currentItemId,
     setSize,
     setType,
     addIngredient,
@@ -46,9 +52,10 @@ export const ChoosePizzaForm: React.FC<Props> = ({
   )
 
   const handleClickAdd = () => {
-    onClickAddCard?.()
+    if (currentItemId) {
+      onSubmit(currentItemId, Array.from(selectedIngredients))
+    }
   }
-
   return (
     <div className={cn(className, "flex flex-1")}>
       <PizzaImage imageUrl={imageUrl} size={size} />
@@ -84,8 +91,12 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <Button className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
-          Добавить в корзину за {totalPrice}
+        <Button
+          loading={loading}
+          onClick={handleClickAdd}
+          className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
+        >
+          Добавить в корзину за {totalPrice} ₽
         </Button>
       </div>
     </div>

@@ -37,7 +37,7 @@ export default async function ProductPage({
           </p>
 
           <GroupVariants
-            selectedValue="2"
+            value="2"
             items={[
               { name: "Маленькая", value: "1" },
               { name: "Средня", value: "2" },
