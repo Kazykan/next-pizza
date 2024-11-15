@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
 
     const data = (await req.json()) as CreateCartItemValues
 
+    // TODO: не работает поиск по элементам в ингредиентах, т.е. он не работает правильно в самой призме
     const findCartItem = await prisma.cartItem.findFirst({
       where: {
         cartId: userCart.id,
@@ -78,17 +79,16 @@ export async function POST(req: NextRequest) {
           quantity: findCartItem.quantity + 1,
         },
       })
+    } else {
+      await prisma.cartItem.create({
+        data: {
+          cartId: userCart.id,
+          productItemId: data.productItemId,
+          quantity: 1,
+          ingredients: { connect: data.ingredients?.map((id) => ({ id })) },
+        },
+      })
     }
-
-    await prisma.cartItem.create({
-      data: {
-        cartId: userCart.id,
-        productItemId: data.productItemId,
-        quantity: 1,
-        ingredients: { connect: data.ingredients?.map((id) => ({ id })) },
-      },
-    })
-
 
     const updatedUserCart = await updateCartTotalAmount(token)
 
@@ -103,4 +103,3 @@ export async function POST(req: NextRequest) {
     )
   }
 }
-
